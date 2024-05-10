@@ -1,0 +1,88 @@
+// Keywords: 
+
+// set up a simple neutral simulation
+initialize()
+{
+	// define here the name of the files
+	defineConstant("file_output1","./collect_par_mutations.txt"); // output file
+    
+    // set the overall mutation rate
+	initializeMutationRate(1.60e-8);
+
+	// m1 mutation type: neutral, m2 mutation type: deleterious, m3 mutation type: lethal, m5 quasi-neutral
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	initializeMutationType("m2", 0.0, "g", -0.2, 0.33);
+	initializeMutationType("m3", 0.02, "f", -1.0);
+    initializeMutationType("m5", 0.5, "f", -0.001);
+
+	// g1 genomic element type: non-gene uses m1 (neutrals)
+	initializeGenomicElementType("g1", c(m1), 1);
+    //g2 genomic element type: gene uses m1 (neutrals), m2 (deleterious), m3 (lethals), m5 (quasi-neutral)
+	initializeGenomicElementType("g2", c(m1,m2,m3,m5), c(0.3330000,0.2941305,0.0787390,0.2941305));
+    
+    //read Drosophila 3R genes
+	lines = readFile("genes3R.txt");
+	g = NULL;
+	start = NULL;
+	end = NULL;
+
+	for (line in lines)
+	{
+   		components = strsplit(line, "\t");
+   		g = c(g, asInteger(components[0]));
+   		start = c(start, asInteger(components[1]));
+   		end = c(end, asInteger(components[2]));
+	}
+
+	//start=start-1;
+	//end=end-1;
+	start=c(start[0:(size(start)-1)]-1);
+	end=c(end[0:(size(end)-1)]-1);
+	initializeGenomicElement(g, start, end);
+
+    //read Drosophila 3R map from Comeron et al. 2012
+	lines = readFile("recombination-file-3R-100kb-2.txt");
+	rates = NULL;
+	ends = NULL;
+
+	for (line in lines)
+	{
+		components = strsplit(line, "\t");
+		ends = c(ends, asInteger(components[0]));
+		rates = c(rates, asFloat(components[1]));
+	}
+
+	ends = c(ends[1:(size(ends)-1)] - 2, 27899999);
+	rates = rates * 1e-8;
+	initializeRecombinationRate(rates, ends);
+    
+    writeFile(filePath=file_output1,contents=(""),append=F);
+}
+
+// create a population of 10,000 individuals
+
+1 { sim.addSubpop("p1", 10000); }
+49800 { p1.setSubpopulationSize(1000); }
+
+mutation(m2) {
+    K = 7.6;
+    if (mut.selectionCoeff >= -0.42)
+        mut.setValue("hh", runif(1,0,exp(K*mut.selectionCoeff)));
+    if (mut.selectionCoeff < -0.42)
+        mut.setValue("hh", runif(1,0,0.04));
+	writeFile(filePath=file_output1,contents=(mut.getValue("hh") +
+	      "\t" + mut.selectionCoeff + "\t" + mut.position),append=T);
+    //debugging 	
+    return T;
+}
+fitness(m2) {	
+    hh = homozygous? 1 else mut.getValue("hh");	
+    return 1.0 + hh * mut.selectionCoeff; // 1 + hs
+}
+
+// run to generation
+50000 late()
+{
+	sim.outputFull();
+	//sim.simulationFinished();
+ }

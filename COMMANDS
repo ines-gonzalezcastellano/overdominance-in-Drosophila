@@ -1,0 +1,15 @@
+# Please note that plink and vcftools must be in the same directory and have executable permissions.
+# Please compile SIMOVERDOM.c, AVERAGE.c and SNP_BP_SLIM3_2.c with the gcc file provided
+# All files must be in the same directory 
+
+# run simulation for each autosomal chromosome arm without overdominance
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_2L 10 001
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_2R 10 002
+qsub script_SLIM3_3L_total.sh INPUT_slim3_genes_3L 10 003
+qsub script_SLIM3_3R_total.sh INPUT_slim3_genes_3R 10 004
+
+# run simulation for each autosomal chromosome arm with overdominance. Modify the proportion of overdominant mutations in the input files to simulate the desired overdominant mutation rate (Uo)
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_2L 10 001
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_2R 10 002
+qsub script_SLIM3_3L_total.sh INPUT_slim3_genes_overdom_3L 10 003
+qsub script_SLIM3_3R_total.sh INPUT_slim3_genes_overdom_3R 10 004
