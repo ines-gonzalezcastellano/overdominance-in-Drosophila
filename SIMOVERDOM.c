@@ -1,4 +1,4 @@
-/* SIMOVERDOM_ines14.c (25/01/2023) */
+/* SIMOVERDOM_ines16.c (18/09/2024) */
 
 /* ***************************************************** */
 
@@ -9,7 +9,7 @@
 #define SS 100000  /* max number of SNPs */
 #define GG 4000  /* max number of genes */
 
-int NIND, NCRO, NLOCI, TOTLOCI, numSNPs, numSNPsneu, numSNPsdel, numSNPslet, numSNPsod, numSNPsqn, numSNPNP;
+int NIND, NCRO, NLOCI, TOTLOCI, numSNPs, numSNPsneu, numSNPsdel, numSNPslet, numSNPsod, numSNPsqn, numSNPsadv, numSNPsadvfix, numSNPNP;
 int i, j, k, l, rep, classes, replicates, g, b;
 int window_size, nwindows;
 int RM[NN], ran_i;
@@ -33,6 +33,8 @@ double d_a_od, alfa_a_od, va_od, vd_od, id_od;
 double d_a_odw, alfa_a_odw, va_odw[NW], vd_odw[NW], id_odw[NW];
 double d_a_qn, alfa_a_qn, va_qn, vd_qn, id_qn;
 double d_a_qnw, alfa_a_qnw, va_qnw[NW], vd_qnw[NW], id_qnw[NW];
+double d_a_adv, alfa_a_adv, va_adv, vd_adv, id_adv;
+double d_a_advw, alfa_a_advw, va_advw[NW], vd_advw[NW], id_advw[NW];
 
 double AA, Aa, aa, q[MM][31];
 double FITN[NN], FITN_F[NN];
@@ -40,13 +42,13 @@ double mean_FITN, mean_FITN_F;
 
 double numTajDwin[NW], TajDwin[NW], cwin[NW];
 
-struct acc gmean_s, gvar_s, AVE_VA, AVE_VD, AVE_ID, AVE_VA_del, AVE_VD_del, AVE_ID_del, AVE_VA_let, AVE_VD_let, AVE_ID_let, AVE_VA_od, AVE_VD_od, AVE_ID_od, AVE_VA_qn, AVE_VD_qn, AVE_ID_qn;
+struct acc gmean_s, gvar_s, AVE_VA, AVE_VD, AVE_ID, AVE_VA_del, AVE_VD_del, AVE_ID_del, AVE_VA_let, AVE_VD_let, AVE_ID_let, AVE_VA_od, AVE_VD_od, AVE_ID_od, AVE_VA_qn, AVE_VD_qn, AVE_ID_qn, AVE_VA_adv, AVE_VD_adv, AVE_ID_adv;
 
-struct acc numr2win[NW], r2win[NW], numpiwin[NW], piwin[NW], neuwin[NW], delwin[NW], letwin[NW], odwin[NW], hsdelwin[NW], sdelwin[NW], hsletwin[NW], sletwin[NW], hsodwin[NW], sodwin[NW], qletwin[NW], qodwin[NW], qdelwin[NW], qneuwin[NW], numgenes[NW], length[NW], Bswin[NW], qnwin[NW], qqnwin[NW],sqnwin[NW], hsqnwin[NW];
+struct acc numr2win[NW], r2win[NW], numpiwin[NW], piwin[NW], neuwin[NW], delwin[NW], letwin[NW], odwin[NW], hsdelwin[NW], sdelwin[NW], hsletwin[NW], sletwin[NW], hsodwin[NW], sodwin[NW], qletwin[NW], qodwin[NW], qdelwin[NW], qneuwin[NW], numgenes[NW], length[NW], Bswin[NW], qnwin[NW], qqnwin[NW],sqnwin[NW], hsqnwin[NW], advwin[NW], qadvwin[NW], sadvwin[NW], hsadvwin[NW];
 
-struct acc AVE_numr2win[NW], AVE_r2win[NW], AVE_numpiwin[NW], AVE_piwin[NW], AVE_neuwin[NW], AVE_delwin[NW], AVE_letwin[NW], AVE_odwin[NW], AVE_qnwin[NW], AVE_va_delwin[NW], AVE_vd_delwin[NW], AVE_id_delwin[NW], AVE_va_letwin[NW], AVE_vd_letwin[NW], AVE_id_letwin[NW], AVE_va_odwin[NW], AVE_vd_odwin[NW], AVE_id_odwin[NW], AVE_va_qnwin[NW], AVE_vd_qnwin[NW], AVE_id_qnwin[NW], AVE_hsdelwin[NW], AVE_sdelwin[NW], AVE_hsletwin[NW], AVE_sletwin[NW], AVE_hsodwin[NW], AVE_sodwin[NW], AVE_hsqnwin[NW], AVE_sqnwin[NW], AVE_qdelwin[NW], AVE_qletwin[NW], AVE_qodwin[NW], AVE_qneuwin[NW], AVE_qqnwin[NW];
+struct acc AVE_numr2win[NW], AVE_r2win[NW], AVE_numpiwin[NW], AVE_piwin[NW], AVE_neuwin[NW], AVE_delwin[NW], AVE_letwin[NW], AVE_odwin[NW], AVE_qnwin[NW], AVE_advwin[NW], AVE_va_delwin[NW], AVE_vd_delwin[NW], AVE_id_delwin[NW], AVE_va_letwin[NW], AVE_vd_letwin[NW], AVE_id_letwin[NW], AVE_va_odwin[NW], AVE_vd_odwin[NW], AVE_id_odwin[NW], AVE_va_qnwin[NW], AVE_vd_qnwin[NW], AVE_id_qnwin[NW], AVE_hsdelwin[NW], AVE_sdelwin[NW], AVE_hsletwin[NW], AVE_sletwin[NW], AVE_hsodwin[NW], AVE_sodwin[NW], AVE_hsqnwin[NW], AVE_sqnwin[NW], AVE_hsadvwin[NW], AVE_sadvwin[NW], AVE_qdelwin[NW], AVE_qletwin[NW], AVE_qodwin[NW], AVE_qneuwin[NW], AVE_qqnwin[NW], AVE_qadvwin[NW], AVE_va_advwin[NW], AVE_vd_advwin[NW], AVE_id_advwin[NW];
 
-struct acc AVE_numSNPsneu[SS], AVE_numSNPsdel[SS], AVE_numSNPslet[SS], AVE_numSNPsod[SS], AVE_numSNPsqn[SS];
+struct acc AVE_numSNPsneu[SS], AVE_numSNPsdel[SS], AVE_numSNPslet[SS], AVE_numSNPsod[SS], AVE_numSNPsqn[SS], AVE_numSNPsadv[SS], AVE_numSNPsadvfix[SS];
     
 struct acc AVE_numTajDwin[NW], AVE_TajDwin[NW], AVE_cwin[NW];
 
@@ -55,7 +57,7 @@ struct acc AVE_q_0[NN];
 
 struct acc AVE_mean_FITN, AVE_mean_FITN_F, AVE_ID_FITN;
 
-FILE *fptr, *fgen, *frep, *fdat, *fpop, *ffmap, *ffreq, *ffped, *fr2file, *fpifile, *fTajDfile, *fRec, *foutC, *foutpii, *foutr2, *foutTajD, *fgenes, *foutcgen, *foutcdel, *foutgenesdel, *foutdel, *foutgenespi, *foutpiB, *fB, *foutkbr2, *ftable;
+FILE *fptr, *fgen, *frep, *fdat, *fpop, *ffmap, *ffreq, *ffped, *fr2file, *fpifile, *fTajDfile, *fRec, *fgenes, *fB, *ftable;
 
 /* ***************************************************** */
 
@@ -64,15 +66,6 @@ main()
 	fptr = fopen ("dfilename.dat","w");
 	fgen = fopen ("genfile.dat","w");
 	ffreq = fopen ("frequencies.dat","w");
-	foutC = fopen ("kbvsc.txt","w");
-	foutpii = fopen ("cvspi.txt","w");
-	foutr2 = fopen ("cvsr2.txt","w");
-	foutTajD = fopen ("cvsTajD.txt","w");
-	foutcgen = fopen ("cvsnumgenes.txt","w");
-	foutcdel = fopen ("cvsdel.txt","w");
-	foutgenesdel = fopen ("numgenesvsdel.txt","w");
-	foutdel = fopen ("delvslength.txt","w");
-	foutkbr2 = fopen ("kbvsr2.txt","w");
     ftable = fopen ("table.txt","w");
 
 	getinputs();
@@ -433,7 +426,7 @@ frequency_genes ()
 		accum (&AVE_q_0[j], accsum(&q_0[j]));
 	}
 
-	/* ******************* ADDITIVE AND DOMINANCE VARIANCE AND INBREEDING DEPRESSION RATE ***************** */
+/* ******************* ADDITIVE AND DOMINANCE VARIANCE AND INBREEDING DEPRESSION RATE ***************** */
 
 	va_del = 0.0;
 	vd_del = 0.0;
@@ -450,6 +443,10 @@ frequency_genes ()
 	va_qn = 0.0;
 	vd_qn = 0.0;
 	id_qn = 0.0;
+    
+    va_adv = 0.0;
+	vd_adv = 0.0;
+	id_adv = 0.0;
 
 	for (k=0; k<NCRO; k++)
 	for (l=0; l<NLOCI; l++)
@@ -466,7 +463,7 @@ frequency_genes ()
 		}
         
         //overdominants
-		else if (s[k][l]>0.0)
+		else if ((s[k][l]>0.0) && (hs[k][l] == 1.5))
 		{
             s1[k][l]=(s[k][l]*hs[k][l])/(1+s[k][l]*hs[k][l]);
             s2[k][l]=(s[k][l]*(1+hs[k][l]))/(1+s[k][l]*hs[k][l]);
@@ -497,7 +494,16 @@ frequency_genes ()
  			va_qn += 2.0 * q[k][l] * (1.0-q[k][l]) * alfa_a_qn * alfa_a_qn;
  			vd_qn += (2.0 * d_a_qn * q[k][l] * (1.0-q[k][l])) * (2.0 * d_a_qn * q[k][l] * (1.0-q[k][l]));
 			id_qn += (2.0 * d_a_qn * q[k][l] * (1.0-q[k][l]));
-            
+        }
+        
+        //advantageous
+        else if ((s[k][l]>0.0) && (hs[k][l] == 0.5))
+        {
+            d_a_adv = (s[k][l]/2.0) * (2.0*hs[k][l] - 1.0);
+			alfa_a_adv = (-s[k][l]/2.0) + ( d_a_adv * (2.0*q[k][l] - 1.0) );
+ 			va_adv += 2.0 * q[k][l] * (1.0-q[k][l]) * alfa_a_adv * alfa_a_adv;
+ 			vd_adv += (2.0 * d_a_adv * q[k][l] * (1.0-q[k][l])) * (2.0 * d_a_adv * q[k][l] * (1.0-q[k][l]));
+			id_adv += (2.0 * d_a_adv * q[k][l] * (1.0-q[k][l]));
         }
 	}
 
@@ -516,11 +522,15 @@ frequency_genes ()
     accum (&AVE_VA_qn, va_qn);
 	accum (&AVE_VD_qn, vd_qn);
 	accum (&AVE_ID_qn, id_qn);
+    
+    accum (&AVE_VA_adv, va_adv);
+	accum (&AVE_VD_adv, vd_adv);
+	accum (&AVE_ID_adv, id_adv);
 
 
-	accum (&AVE_VA, va_let + va_od + va_del + va_qn);
-	accum (&AVE_VD, vd_let + vd_od + vd_del + vd_qn);
-	accum (&AVE_ID, id_let + id_od + id_del + id_qn);
+	accum (&AVE_VA, va_let + va_od + va_del + va_qn + va_adv);
+	accum (&AVE_VD, vd_let + vd_od + vd_del + vd_qn + vd_adv);
+	accum (&AVE_ID, id_let + id_od + id_del + id_qn + id_adv);
     
     /* ******************* windows ADDITIVE AND DOMINANCE VARIANCE AND INBREEDING DEPRESSION RATE ***************** */
 
@@ -530,6 +540,7 @@ frequency_genes ()
 		va_odw[j] = 0.0; vd_odw[j] = 0.0; id_odw[j] = 0.0;
 		va_delw[j] = 0.0; vd_delw[j] = 0.0; id_delw[j] = 0.0;
 		va_qnw[j] = 0.0; vd_qnw[j] = 0.0; id_qnw[j] = 0.0;
+        va_advw[j] = 0.0; vd_advw[j] = 0.0; id_advw[j] = 0.0;
 	}
 
 	for (k=0; k<NCRO; k++)
@@ -551,7 +562,7 @@ frequency_genes ()
             }
             
             //overdominants
-            else if (s[k][l]>0.0)
+            else if ((s[k][l]>0.0) && (hs[k][l] == 1.5))
             {  
                 s1w[k][l]=(s[k][l]*hs[k][l])/(1+s[k][l]*hs[k][l]);
                 s2w[k][l]=(s[k][l]*(1+hs[k][l]))/(1+s[k][l]*hs[k][l]);
@@ -578,11 +589,9 @@ frequency_genes ()
                 vd_delw[j] += (2.0 * d_a_delw * q[k][l] * (1.0-q[k][l])) * (2.0 * d_a_delw * q[k][l] * (1.0-q[k][l]));
                 id_delw[j] += (2.0 * d_a_delw * q[k][l] * (1.0-q[k][l]));
                 
-                //if ((tracelevel!=0) && (j==5)) fprintf(fptr,"rep=%d j=%d id_delw=%10.8f id_delwin=%10.8f\n", rep, j, id_delw, accsum(&id_delwin[j]));
-                
-                //if ((tracelevel!=0) && (j==5)) fprintf(fptr,"rep=%d j=%d va_delw=%10.8f va_delwin=%10.8f\n", rep, j, va_delw, accsum(&va_delwin[j]));
-                
-                //if ((tracelevel!=0) && (j==5)) fprintf(fptr,"rep=%d j=%d vd_delw=%10.8f vd_delwin=%10.8f\n", rep, j, vd_delw, accsum(&vd_delwin[j]));
+                //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d id_delw=%15.12f\n", rep, j, id_delw[j]);
+                //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d va_delw=%15.12f\n", rep, j, va_delw[j]);
+                //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d vd_delw=%15.12f\n", rep, j, vd_delw[j]);
             } 
             
             //QN
@@ -593,6 +602,22 @@ frequency_genes ()
                 va_qnw[j] += 2.0 * q[k][l] * (1.0-q[k][l]) * alfa_a_qnw * alfa_a_qnw;
                 vd_qnw[j] += (2.0 * d_a_qnw * q[k][l] * (1.0-q[k][l])) * (2.0 * d_a_qnw * q[k][l] * (1.0-q[k][l]));
                 id_qnw[j] += (2.0 * d_a_qnw * q[k][l] * (1.0-q[k][l]));
+            }
+            
+            //advantageous
+            else if ((s[k][l]>0.0) && (hs[k][l] == 0.5))
+            {
+                d_a_advw = (s[k][l]/2.0) * (2.0*hs[k][l] - 1.0);
+                alfa_a_advw = (-s[k][l]/2.0) + ( d_a_advw * (2.0*q[k][l] - 1.0) );
+                va_advw[j] += 2.0 * q[k][l] * (1.0-q[k][l]) * alfa_a_advw * alfa_a_advw;
+                vd_advw[j] += (2.0 * d_a_advw * q[k][l] * (1.0-q[k][l])) * (2.0 * d_a_advw * q[k][l] * (1.0-q[k][l]));
+                id_advw[j] += (2.0 * d_a_advw * q[k][l] * (1.0-q[k][l]));
+                
+                //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d id_advw=%15.12f\n", rep, j, id_advw[j]);
+                
+                //if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d k=%d l=%d s=%f  h=%f d_a_advw=%f alfa_a_advw=%f va_advw=%15.12f\n", rep, j, k, l, s[k][l], hs[k][l], d_a_advw, alfa_a_advw, va_advw[j]);
+                
+                //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d vd_advw=%15.12f\n", rep, j, vd_advw[j]);
             }
         }
     }
@@ -611,40 +636,18 @@ frequency_genes ()
         accum (&AVE_va_qnwin[j], va_qnw[j]);
 		accum (&AVE_vd_qnwin[j], vd_qnw[j]);
 		accum (&AVE_id_qnwin[j], id_qnw[j]);
+        accum (&AVE_va_advwin[j], va_advw[j]);
+		accum (&AVE_vd_advwin[j], vd_advw[j]);
+		accum (&AVE_id_advwin[j], id_advw[j]);
+          
+        if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d AVE_va_advw=%15.12f\n", rep, j, accmean(&AVE_va_advwin[j])); 
+        if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d AVE_vd_advw=%15.12f\n", rep, j, accmean(&AVE_vd_advwin[j]));
+        if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d AVE_id_advw=%15.12f\n", rep, j, accmean(&AVE_id_advwin[j]));
+        
+        //if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d AVE_va_qnw=%15.12f\n", rep, j, accmean(&AVE_va_qnwin[j])); 
+        //if (tracelevel!=0)  fprintf(fptr,"rep=%d j=%d va_qnw=%15.12f\n", rep, j, va_qnw[j]);  
 	}
-
-/*    for (j=0; j<(nwindows/window_size); j++)
-    {
-        
-        //deleterious
-        if (accmean(&va_delwin[j]) >= 0.0) accum (&AVE_va_delwin[j], accsum(&va_delwin[j]));
-	  	if (accmean(&vd_delwin[j]) >= 0.0) accum (&AVE_vd_delwin[j], accsum(&vd_delwin[j]));
-	  	if (accmean(&id_delwin[j]) >= 0.0) accum (&AVE_id_delwin[j], accsum(&id_delwin[j]));
-        
-        //if (tracelevel!=0) fprintf(fptr,"rep=%d j=%d id_delwin=%10.8f\n", rep, j, accsum(&id_delwin[j]));
-        
-        //lethals
-        if (accmean(&va_letwin[j]) >= 0.0) accum (&AVE_va_letwin[j], accsum(&va_letwin[j]));
-	  	if (accmean(&vd_letwin[j]) >= 0.0) accum (&AVE_vd_letwin[j], accsum(&vd_letwin[j]));
-	  	if (accmean(&id_letwin[j]) >= 0.0) accum (&AVE_id_letwin[j], accsum(&id_letwin[j]));
-        
-        //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d id_letwin=%10.8f\n", rep, j, accsum(&id_letwin[j]));
-        
-        //overdominants
-        if (accmean(&va_odwin[j]) >= 0.0) accum (&AVE_va_odwin[j], accsum(&va_odwin[j]));
-	  	if (accmean(&vd_odwin[j]) >= 0.0) accum (&AVE_vd_odwin[j], accsum(&vd_odwin[j]));
-	  	if (accmean(&id_odwin[j]) >= 0.0) accum (&AVE_id_odwin[j], accsum(&id_odwin[j]));
-        
-        //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d id_odwin=%10.8f\n", rep, j, accsum(&id_odwin[j]));
-
-        //QN
-        if (accmean(&va_qnwin[j]) >= 0.0) accum (&AVE_va_qnwin[j], accsum(&va_qnwin[j]));
-	  	if (accmean(&vd_qnwin[j]) >= 0.0) accum (&AVE_vd_qnwin[j], accsum(&vd_qnwin[j]));
-	  	if (accmean(&id_qnwin[j]) >= 0.0) accum (&AVE_id_qnwin[j], accsum(&id_qnwin[j]));
-        
-        //if ((tracelevel!=0) && (j==1)) fprintf(fptr,"rep=%d j=%d id_qnwin=%10.8f\n", rep, j, accsum(&id_qnwin[j]));
-    }
-*/
+    
     /* ******************* windows s, h, q ***************** */
 
     numSNPslet = 0.0;
@@ -652,6 +655,8 @@ frequency_genes ()
     numSNPsdel = 0.0;
     numSNPsneu = 0.0;
     numSNPsqn = 0.0;
+    numSNPsadv = 0.0;
+    numSNPsadvfix = 0.0;
     
     for (k=0; k<NCRO; k++)
 	for (l=0; l<NLOCI; l++)
@@ -665,7 +670,7 @@ frequency_genes ()
         }
         
         //overdominants
-        else if (s[k][l]>0.0)
+        else if ((s[k][l]>0.0) && (hs[k][l] == 1.5))
         {
             numSNPsod ++;
             //if (tracelevel!=0) fprintf(fptr,"rep=%d k=%d l=%d pos=%llu q=%f h=%f s=%f od=%d\n", rep, k, l, pos[k][l], q[k][l], hs[k][l], s[k][l], numSNPsod);
@@ -685,6 +690,12 @@ frequency_genes ()
             //if (tracelevel!=0) fprintf(fptr,"rep=%d k=%d l=%d pos=%llu q=%f h=%f s=%f qn=%d\n", rep, k, l, pos[k][l], q[k][l], hs[k][l], s[k][l], numSNPsqn);
         }
         
+        //advantageous
+         else if ((s[k][l]>0.0) && (hs[k][l] == 0.5))
+        {
+            numSNPsadv ++;
+        }
+        
     }
     
     for (k=0; k<NCRO; k++)
@@ -695,10 +706,20 @@ frequency_genes ()
         numSNPsneu ++;
     }
     
+    for (k=0; k<NCRO; k++)
+	for (l=0; l<NLOCI; l++)
+	if ((s[k][l]>0.0) && (hs[k][l] == 0.5)&&(q[k][l] == 1.0))
+    //neutrals
+    {
+        numSNPsadvfix ++;
+    }
+    
     accum (&AVE_numSNPslet, numSNPslet);
 	accum (&AVE_numSNPsod, numSNPsod);
 	accum (&AVE_numSNPsdel, numSNPsdel);
     accum (&AVE_numSNPsqn, numSNPsqn);
+    accum (&AVE_numSNPsadv, numSNPsadv);
+    accum (&AVE_numSNPsadvfix, numSNPsadvfix);
     accum (&AVE_numSNPsneu, numSNPsneu);
 
     
@@ -720,7 +741,7 @@ frequency_genes ()
             }
             
             //overdominants
-            else if (s[k][l]>0.0)
+            else if ((s[k][l]>0.0) && (hs[k][l] == 1.5))
             {
                 accum (&odwin[j], 1.0);
                 accum (&hsodwin[j], hs[k][l]);
@@ -749,6 +770,15 @@ frequency_genes ()
                 accum (&qqnwin[j], q[k][l]);
                 //if ((tracelevel!=0) && (j==5))    fprintf(fptr,"rep=%d k=%d l=%d pos=%llu j=%d qn=%f q=%f h=%f s=%f\n", rep, k, l, pos[k][l], j, accsum(&qnwin[j]), q[k][l], hs[k][l], s[k][l]);
             }
+            
+            //advantageous
+            else if ((s[k][l]>0.0) && (hs[k][l] == 0.5))
+            {
+                accum (&advwin[j], 1.0);
+                accum (&hsadvwin[j], hs[k][l]);
+                accum (&sadvwin[j], s[k][l]);
+                accum (&qadvwin[j], q[k][l]);
+            }
         }
     }
     
@@ -772,6 +802,7 @@ frequency_genes ()
         accum (&AVE_odwin[j], accsum(&odwin[j]));
         accum (&AVE_delwin[j], accsum(&delwin[j]));
         accum (&AVE_qnwin[j], accsum(&qnwin[j]));
+        accum (&AVE_advwin[j], accsum(&advwin[j]));
         
         //neutrals
         if (accmean(&qneuwin[j]) >= 0.0) accum (&AVE_qneuwin[j], accmean(&qneuwin[j]));
@@ -783,7 +814,6 @@ frequency_genes ()
         
         ///if (tracelevel!=0)   fprintf(fptr,"rep=%d j=%d del=%f q=%f h=%f s=%f let=%f  od=%f\n", rep, j, accsum(&del[j]), accmean(&qdelwin[j]), accmean(&hsdelwin[j]), accmean(&sdelwin[j]), accsum(&letwin[j]), accsum(&odwin[j]));
 
-        
         //overdominants
         if (accmean(&hsodwin[j]) >= 0.0) accum (&AVE_hsodwin[j], accmean(&hsodwin[j]));
         if (accmean(&sodwin[j]) >= 0.0) accum (&AVE_sodwin[j], accmean(&sodwin[j]));
@@ -798,6 +828,11 @@ frequency_genes ()
         if (accmean(&hsqnwin[j]) >= 0.0) accum (&AVE_hsqnwin[j], accmean(&hsqnwin[j]));
         if (accmean(&sqnwin[j]) <= 0.0) accum (&AVE_sqnwin[j], accmean(&sqnwin[j]));
         if (accmean(&qqnwin[j]) >= 0.0) accum (&AVE_qqnwin[j], accmean(&qqnwin[j]));
+        
+        //advantageous
+        if (accmean(&hsadvwin[j]) >= 0.0) accum (&AVE_hsadvwin[j], accmean(&hsadvwin[j]));
+        if (accmean(&sadvwin[j]) >= 0.0) accum (&AVE_sadvwin[j], accmean(&sadvwin[j]));
+        if (accmean(&qadvwin[j]) >= 0.0) accum (&AVE_qadvwin[j], accmean(&qadvwin[j]));
     }
 }
 /* ***************************************************** */
@@ -814,7 +849,7 @@ genotypic_values ()
 		for (k=0; k<NCRO; k++)
 		for (l=0; l<NLOCI; l++)
 		//overdominance
-		if (s[k][l] > 0.0)
+		if ((s[k][l]>0.0) && (hs[k][l] == 1.5))
 			{
 				if (((gm[i][k][0] & RM[l])==RM[l])&&((gm[i][k][1] & RM[l])==RM[l]))  	pm_s[i] *= 1.0 - s2[k][l] /* aa */;
 				else if (((gm[i][k][0] & RM[l])!=RM[l])&&((gm[i][k][1] & RM[l])!=RM[l])) pm_s[i] *= 1.0 - s1[k][l] /* AA */;
@@ -1076,6 +1111,11 @@ settozero()
 		initacc (&sqnwin[j]);
 		initacc (&qqnwin[j]);
         
+        initacc (&advwin[j]);
+		initacc (&hsadvwin[j]);
+		initacc (&sadvwin[j]);
+		initacc (&qadvwin[j]);
+        
         initacc (&odwin[j]);
         initacc (&hsodwin[j]);
 		initacc (&sodwin[j]);
@@ -1096,15 +1136,16 @@ printout()
         
 	fgen = fopen ("genfile.dat","w");
 
-	fprintf(fgen, "NINDNP=%d  NIND=%d  NCRO=%d  TOTLOCI=%d  numSNPNP=%d  numSNPsneu=%f  numSNPsdel=%f  numSNPsqn=%f  numSNPslet=%f  numSNPod=%f  LEQ_NP=%f\n", NINDNP, NIND, NCRO, TOTLOCI, numSNPNP, accmean(&AVE_numSNPsneu), accmean(&AVE_numSNPsdel), accmean(&AVE_numSNPsqn), accmean(&AVE_numSNPslet), accmean(&AVE_numSNPsod), LEQ_NP);
+	fprintf(fgen, "NINDNP=%d  NIND=%d  NCRO=%d  TOTLOCI=%d  numSNPNP=%d  numSNPsneu=%f  numSNPsdel=%f  numSNPsqn=%f  numSNPslet=%f  numSNPod=%f  numSNPadv=%f  numSNPadvfix=%f  LEQ_NP=%f\n", NINDNP, NIND, NCRO, TOTLOCI, numSNPNP, accmean(&AVE_numSNPsneu), accmean(&AVE_numSNPsdel), accmean(&AVE_numSNPsqn), accmean(&AVE_numSNPslet), accmean(&AVE_numSNPsod), accmean(&AVE_numSNPsadv), accmean(&AVE_numSNPsadvfix), LEQ_NP);
 
 	fprintf(fgen, "\n*********** Mean fitness and phenotype ***********\n\n");
 
-	fprintf(fgen, "W           VG          VA          VAdel       VAqn       VAlet       VAod        VD          VDdel          VDqn       VDlet       VDod        B          Bdel          Bqn        Blet        Bod\n");
-		fprintf(fgen, "%10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f\n", accmean(&gmean_s), accmean(&gvar_s), accmean(&AVE_VA), accmean(&AVE_VA_del), accmean(&AVE_VA_qn), accmean(&AVE_VA_let), accmean(&AVE_VA_od), accmean(&AVE_VD), accmean(&AVE_VD_del), accmean(&AVE_VD_qn),accmean(&AVE_VD_let), accmean(&AVE_VD_od), accmean(&AVE_ID), accmean(&AVE_ID_del), accmean(&AVE_ID_qn), accmean(&AVE_ID_let), accmean(&AVE_ID_od));
-	fprintf(fgen, "SD_W      SD_VG     SD_VA     SD_VAdel  SD_VAqn  SD_VAlet  SD_VAod   SD_VD     SD_VDdel     SD_VDqn  SD_VDlet  SD_VDod   SD_B      SD_Bdel      SD_Bqn   SD_Blet   SD_Bod\n");
+	fprintf(fgen, "W           VG          VA          VAdel       VAqn       VAlet       VAod        VAadv        VD          VDdel          VDqn       VDlet       VDod        VDadv        B          Bdel          Bqn        Blet        Bod        Badv\n");
+		fprintf(fgen, "%10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f  %10.8f\n", accmean(&gmean_s), accmean(&gvar_s), accmean(&AVE_VA), accmean(&AVE_VA_del), accmean(&AVE_VA_qn), accmean(&AVE_VA_let), accmean(&AVE_VA_od), accmean(&AVE_VA_adv), accmean(&AVE_VD), accmean(&AVE_VD_del), accmean(&AVE_VD_qn),accmean(&AVE_VD_let), accmean(&AVE_VD_od), accmean(&AVE_VD_adv), accmean(&AVE_ID), accmean(&AVE_ID_del), accmean(&AVE_ID_qn), accmean(&AVE_ID_let), accmean(&AVE_ID_od), accmean(&AVE_ID_adv));
+    
+	/*fprintf(fgen, "SD_W      SD_VG     SD_VA     SD_VAdel  SD_VAqn  SD_VAlet  SD_VAod   SD_VD     SD_VDdel     SD_VDqn  SD_VDlet  SD_VDod   SD_B      SD_Bdel      SD_Bqn   SD_Blet   SD_Bod\n");
 		fprintf(fgen,   "%f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f  %f\n", sqrt(variance(&gmean_s)), sqrt(variance(&gvar_s)), sqrt(variance(&AVE_VA)), sqrt(variance(&AVE_VA_del)), sqrt(variance(&AVE_VA_qn)), sqrt(variance(&AVE_VA_let)), sqrt(variance(&AVE_VA_od)), sqrt(variance(&AVE_VD)), sqrt(variance(&AVE_VD_del)), sqrt(variance(&AVE_VD_qn)), sqrt(variance(&AVE_VD_let)), sqrt(variance(&AVE_VD_od)), sqrt(variance(&AVE_ID)), sqrt(variance(&AVE_ID_del)), sqrt(variance(&AVE_ID_qn)), sqrt(variance(&AVE_ID_let)), sqrt(variance(&AVE_ID_od)));
-
+*/
 	fprintf(fgen, "\n*********** ID from homozygotes ***********\n\n");
 
 	fprintf(fgen, "mean_FITN=%6.4f    mean_FITN_F=%6.4f    ID_F1=%6.4f\n", accmean(&AVE_mean_FITN), accmean(&AVE_mean_FITN_F), accmean(&AVE_ID_FITN));
@@ -1125,84 +1166,32 @@ printout()
         if (accmean(&AVE_va_letwin[j]) > 0.0) TOT_VA[j] += accmean(&AVE_va_letwin[j]); 
         if (accmean(&AVE_va_odwin[j]) > 0.0) TOT_VA[j] += accmean(&AVE_va_odwin[j]); 
         if (accmean(&AVE_va_qnwin[j]) > 0.0) TOT_VA[j] += accmean(&AVE_va_qnwin[j]); 
+        if (accmean(&AVE_va_advwin[j]) > 0.0) TOT_VA[j] += accmean(&AVE_va_advwin[j]); 
     
         TOT_VD[j] = 0.0;
         if (accmean(&AVE_vd_delwin[j]) > 0.0) TOT_VD[j] += accmean(&AVE_vd_delwin[j]); 
         if (accmean(&AVE_vd_letwin[j]) > 0.0) TOT_VD[j] += accmean(&AVE_vd_letwin[j]); 
         if (accmean(&AVE_vd_odwin[j]) > 0.0) TOT_VD[j] += accmean(&AVE_vd_odwin[j]);
         if (accmean(&AVE_vd_qnwin[j]) > 0.0) TOT_VD[j] += accmean(&AVE_vd_qnwin[j]); 
+        if (accmean(&AVE_vd_advwin[j]) > 0.0) TOT_VD[j] += accmean(&AVE_vd_advwin[j]); 
     
         TOT_ID[j] = 0.0;
         if (accmean(&AVE_id_delwin[j]) > 0.0) TOT_ID[j] += accmean(&AVE_id_delwin[j]); 
         if (accmean(&AVE_id_letwin[j]) > 0.0) TOT_ID[j] += accmean(&AVE_id_letwin[j]); 
         if (accmean(&AVE_id_odwin[j]) > 0.0) TOT_ID[j] += accmean(&AVE_id_odwin[j]);
         if (accmean(&AVE_id_qnwin[j]) > 0.0) TOT_ID[j] += accmean(&AVE_id_qnwin[j]); 
+        if (accmean(&AVE_id_advwin[j]) > 0.0) TOT_ID[j] += accmean(&AVE_id_advwin[j]); 
     }
     
 	fprintf(fgen, "\n\n*********** windows 100kb ***********\n\n");
-	fprintf(fgen, "kb      nsnps       qneu       r2         pi         TajD        c          Bs         numgenes   length       del         qdel          hdel              sdel       qn         qqn          hqn              sqn           let        qlet          hlet              slet        od         qod                   hod              sod              VA             VAdel         VAqn         VAlet            VAod          VD             VDdel            VDqn            VDlet            VDod      B              Bdel            Bqn            Blet            Bod\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(fgen, "%d     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f\n", (j+1)*100, accmean(&AVE_neuwin[j]), accmean(&AVE_qneuwin[j]), accmean(&AVE_r2win[j]), accmean(&AVE_piwin[j]), accmean(&AVE_TajDwin[j]), accmean(&AVE_cwin[j]), accmean(&Bswin[j]), accsum(&numgenes[j]), accmean(&length[j]), accmean(&AVE_delwin[j]), accmean(&AVE_qdelwin[j]), accmean(&AVE_hsdelwin[j]), accmean(&AVE_sdelwin[j]), accmean(&AVE_qnwin[j]), accmean(&AVE_qqnwin[j]), accmean(&AVE_hsqnwin[j]), accmean(&AVE_sqnwin[j]), accmean(&AVE_letwin[j]), accmean(&AVE_qletwin[j]), accmean(&AVE_hsletwin[j]), accmean(&AVE_sletwin[j]), accmean(&AVE_odwin[j]), accmean(&AVE_qodwin[j]), accmean(&AVE_hsodwin[j]), accmean(&AVE_sodwin[j]), TOT_VA[j], accmean(&AVE_va_delwin[j]), accmean(&AVE_va_qnwin[j]), accmean(&AVE_va_letwin[j]), accmean(&AVE_va_odwin[j]), TOT_VD[j], accmean(&AVE_vd_delwin[j]), accmean(&AVE_vd_qnwin[j]), accmean(&AVE_vd_letwin[j]), accmean(&AVE_vd_odwin[j]), TOT_ID[j], accmean(&AVE_id_delwin[j]), accmean(&AVE_id_qnwin[j]), accmean(&AVE_id_letwin[j]), accmean(&AVE_id_odwin[j]));
+	fprintf(fgen, "kb      nsnps       qneu       r2         pi         TajD        c          Bs         numgenes   length       del         qdel          hdel              sdel       qn         qqn          hqn              sqn           let        qlet          hlet              slet        od         qod                   hod              sod              adv         qadv                   hadv              sadv              VA             VAdel         VAqn         VAlet            VAod          VAadv          VD             VDdel            VDqn            VDlet            VDod      VDadv      B              Bdel            Bqn            Blet            Bod            Badv\n");
+	for (j=0; j<(nwindows/window_size); j++) fprintf(fgen, "%d     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f\n", (j+1)*100, accmean(&AVE_neuwin[j]), accmean(&AVE_qneuwin[j]), accmean(&AVE_r2win[j]), accmean(&AVE_piwin[j]), accmean(&AVE_TajDwin[j]), accmean(&AVE_cwin[j]), accmean(&Bswin[j]), accsum(&numgenes[j]), accmean(&length[j]), accmean(&AVE_delwin[j]), accmean(&AVE_qdelwin[j]), accmean(&AVE_hsdelwin[j]), accmean(&AVE_sdelwin[j]), accmean(&AVE_qnwin[j]), accmean(&AVE_qqnwin[j]), accmean(&AVE_hsqnwin[j]), accmean(&AVE_sqnwin[j]), accmean(&AVE_letwin[j]), accmean(&AVE_qletwin[j]), accmean(&AVE_hsletwin[j]), accmean(&AVE_sletwin[j]), accmean(&AVE_odwin[j]), accmean(&AVE_qodwin[j]), accmean(&AVE_hsodwin[j]), accmean(&AVE_sodwin[j]), accmean(&AVE_advwin[j]), accmean(&AVE_qadvwin[j]), accmean(&AVE_hsadvwin[j]), accmean(&AVE_sadvwin[j]), TOT_VA[j], accmean(&AVE_va_delwin[j]), accmean(&AVE_va_qnwin[j]), accmean(&AVE_va_letwin[j]), accmean(&AVE_va_odwin[j]), accmean(&AVE_va_advwin[j]), TOT_VD[j], accmean(&AVE_vd_delwin[j]), accmean(&AVE_vd_qnwin[j]), accmean(&AVE_vd_letwin[j]), accmean(&AVE_vd_odwin[j]), accmean(&AVE_vd_advwin[j]), TOT_ID[j], accmean(&AVE_id_delwin[j]), accmean(&AVE_id_qnwin[j]), accmean(&AVE_id_letwin[j]), accmean(&AVE_id_odwin[j]), accmean(&AVE_id_advwin[j]));
 
     fclose(fgen);
 
-	foutC = fopen ("kbvsc.txt","w");
-	fprintf(foutC, "kb	c\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutC, "%d	%6.4f\n", (j+1)*100, accmean(&AVE_cwin[j]));
-    fclose(foutC);
-
-	foutkbr2 = fopen ("kbvsr2.txt","w");
-	fprintf(foutkbr2, "kb	r2\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutkbr2, "%d	%6.4f\n", (j+1)*100, accmean(&AVE_r2win[j]));
-    fclose(foutkbr2);
-
-	foutpii = fopen ("cvspi.txt","w");
-    fprintf(foutpii, "c	pi\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutpii, "%6.4f	%6.4f\n", accmean(&AVE_cwin[j]), accmean(&AVE_piwin[j]));
-    fclose(foutpii);
-
-	foutr2 = fopen ("cvsr2.txt","w");
-	fprintf(foutr2, "c	r2\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutr2, "%6.4f	%6.4f\n", accmean(&AVE_cwin[j]), accmean(&AVE_r2win[j]));
-    fclose(foutr2);
-
-    foutTajD = fopen ("cvsTajD.txt","w");
-	fprintf(foutTajD, "c	TajD\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutTajD, "%6.4f	%6.4f\n", accmean(&AVE_cwin[j]), accmean(&AVE_TajDwin[j]));
-    fclose(foutTajD);
-
-	foutcgen = fopen ("cvsnumgenes.txt","w");
-	fprintf(foutcgen, "c	numgenes\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutcgen, "%6.4f	%6.4f\n", accmean(&AVE_cwin[j]), accsum(&numgenes[j]));
-    fclose(foutcgen);
-
-	foutcdel = fopen ("cvsdel.txt","w");
-	fprintf(foutcdel, "c	del\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutcdel, "%6.4f	%6.4f\n", accmean(&AVE_cwin[j]), accmean(&AVE_delwin[j]));
-    fclose(foutcdel);
-
-	foutgenesdel = fopen ("numgenesvsdel.txt","w");
-	fprintf(foutgenesdel, "numgenes	del\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutgenesdel, "%6.4f	%6.4f\n", accsum(&numgenes[j]), accmean(&AVE_delwin[j]));
-    fclose(foutgenesdel);
-
-	foutdel = fopen ("delvslength.txt","w");
-	fprintf(foutdel, "del	lengthgene\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutdel, "%6.4f	%6.4f\n", accmean(&AVE_delwin[j]), accmean(&length[j]));
-    fclose(foutdel);
-
-	foutgenespi = fopen ("numgenesvspi.txt","w");
-	fprintf(foutgenespi, "numgenes	pi\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutgenespi, "%6.4f	%6.4f\n", accsum(&numgenes[j]), accmean(&AVE_piwin[j]));
-    fclose(foutgenespi);
-
-	foutpiB = fopen ("pivsB.txt","w");
-	fprintf(foutpiB, "pi	B\n");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(foutpiB, "%6.4f	%6.4f\n", accmean(&AVE_piwin[j]), accmean(&Bswin[j]));
-	fclose(foutpiB);
-
-
     ftable = fopen ("table.txt","w");
-	for (j=0; j<(nwindows/window_size); j++) fprintf(ftable, "%d     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f\n", (j+1)*100, accmean(&AVE_neuwin[j]), accmean(&AVE_qneuwin[j]), accmean(&AVE_r2win[j]), accmean(&AVE_piwin[j]), accmean(&AVE_TajDwin[j]), accmean(&AVE_cwin[j]), accmean(&Bswin[j]), accsum(&numgenes[j]), accmean(&length[j]), accmean(&AVE_delwin[j]), accmean(&AVE_qdelwin[j]), accmean(&AVE_hsdelwin[j]), accmean(&AVE_sdelwin[j]), accmean(&AVE_qnwin[j]), accmean(&AVE_qqnwin[j]), accmean(&AVE_hsqnwin[j]), accmean(&AVE_sqnwin[j]), accmean(&AVE_letwin[j]), accmean(&AVE_qletwin[j]), accmean(&AVE_hsletwin[j]), accmean(&AVE_sletwin[j]), accmean(&AVE_odwin[j]), accmean(&AVE_qodwin[j]), accmean(&AVE_hsodwin[j]), accmean(&AVE_sodwin[j]),TOT_VA[j], accmean(&AVE_va_delwin[j]), accmean(&AVE_va_qnwin[j]), accmean(&AVE_va_letwin[j]), accmean(&AVE_va_odwin[j]), TOT_VD[j], accmean(&AVE_vd_delwin[j]), accmean(&AVE_vd_qnwin[j]), accmean(&AVE_vd_letwin[j]), accmean(&AVE_vd_odwin[j]), TOT_ID[j], accmean(&AVE_id_delwin[j]), accmean(&AVE_id_qnwin[j]), accmean(&AVE_id_letwin[j]), accmean(&AVE_id_odwin[j]));
+	for (j=0; j<(nwindows/window_size); j++) fprintf(ftable, "%d     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %6.4f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f     %10.8f\n", (j+1)*100, accmean(&AVE_neuwin[j]), accmean(&AVE_qneuwin[j]), accmean(&AVE_r2win[j]), accmean(&AVE_piwin[j]), accmean(&AVE_TajDwin[j]), accmean(&AVE_cwin[j]), accmean(&Bswin[j]), accsum(&numgenes[j]), accmean(&length[j]), accmean(&AVE_delwin[j]), accmean(&AVE_qdelwin[j]), accmean(&AVE_hsdelwin[j]), accmean(&AVE_sdelwin[j]), accmean(&AVE_qnwin[j]), accmean(&AVE_qqnwin[j]), accmean(&AVE_hsqnwin[j]), accmean(&AVE_sqnwin[j]), accmean(&AVE_letwin[j]), accmean(&AVE_qletwin[j]), accmean(&AVE_hsletwin[j]), accmean(&AVE_sletwin[j]), accmean(&AVE_odwin[j]), accmean(&AVE_qodwin[j]), accmean(&AVE_hsodwin[j]), accmean(&AVE_sodwin[j]), accmean(&AVE_advwin[j]), accmean(&AVE_qadvwin[j]), accmean(&AVE_hsadvwin[j]), accmean(&AVE_sadvwin[j]), TOT_VA[j], accmean(&AVE_va_delwin[j]), accmean(&AVE_va_qnwin[j]), accmean(&AVE_va_letwin[j]), accmean(&AVE_va_odwin[j]), accmean(&AVE_va_advwin[j]), TOT_VD[j], accmean(&AVE_vd_delwin[j]), accmean(&AVE_vd_qnwin[j]), accmean(&AVE_vd_letwin[j]), accmean(&AVE_vd_odwin[j]), accmean(&AVE_vd_advwin[j]), TOT_ID[j], accmean(&AVE_id_delwin[j]), accmean(&AVE_id_qnwin[j]), accmean(&AVE_id_letwin[j]), accmean(&AVE_id_odwin[j]), accmean(&AVE_id_advwin[j]));
+                                                     
     fclose(ftable);
 }
 
