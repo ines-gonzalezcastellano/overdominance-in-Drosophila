@@ -2,14 +2,52 @@
 # Please compile SIMOVERDOM.c, AVERAGE.c and SNP_BP_SLIM3_2.c with the gcc file provided
 # All files must be in the same directory 
 
-# run simulation for each autosomal chromosome arm without overdominance
-qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_2L 10 001
-qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_2R 10 002
-qsub script_SLIM3_3L_total.sh INPUT_slim3_genes_3L 10 003
-qsub script_SLIM3_3R_total.sh INPUT_slim3_genes_3R 10 004
+# run 10 simulation replicates for each autosomal chromosome and overdominant mutation rate
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_00_2L_QN 10 2LSD00
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_02_2L_QN 10 2LSD02
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_04_2L_QN 10 2LSD04
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_06_2L_QN 10 2LSD06
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_08_2L_QN 10 2LSD08
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_10_2L_QN 10 2LSD10
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_12_2L_QN 10 2LSD12
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_14_2L_QN 10 2LSD14
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_16_2L_QN 10 2LSD16
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_18_2L_QN 10 2LSD18
+qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_20_2L_QN 10 2LSD20
 
-# run simulation for each autosomal chromosome arm with overdominance. Modify the proportion of overdominant mutations in the input files to simulate the desired overdominant mutation rate (Uo)
-qsub script_SLIM3_2L_total.sh INPUT_slim3_genes_overdom_2L 10 001
-qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_2R 10 002
-qsub script_SLIM3_3L_total.sh INPUT_slim3_genes_overdom_3L 10 003
-qsub script_SLIM3_3R_total.sh INPUT_slim3_genes_overdom_3R 10 004
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_00_2R_QN 10 2RSD00
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_02_2R_QN 10 2RSD02
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_04_2R_QN 10 2RSD04
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_06_2R_QN 10 2RSD06
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_08_2R_QN 10 2RSD08
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_10_2R_QN 10 2RSD10
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_12_2R_QN 10 2RSD12
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_14_2R_QN 10 2RSD14
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_16_2R_QN 10 2RSD16
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_18_2R_QN 10 2RSD18
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_20_2R_QN 10 2RSD20
+
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_00_2R_QN 10 2RSD00
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_02_2R_QN 10 2RSD02
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_04_2R_QN 10 2RSD04
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_06_2R_QN 10 2RSD06
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_08_2R_QN 10 2RSD08
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_10_2R_QN 10 2RSD10
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_12_2R_QN 10 2RSD12
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_14_2R_QN 10 2RSD14
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_16_2R_QN 10 2RSD16
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_18_2R_QN 10 2RSD18
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_20_2R_QN 10 2RSD20
+
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_00_2R_QN 10 2RSD00
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_02_2R_QN 10 2RSD02
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_04_2R_QN 10 2RSD04
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_06_2R_QN 10 2RSD06
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_08_2R_QN 10 2RSD08
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_10_2R_QN 10 2RSD10
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_12_2R_QN 10 2RSD12
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_14_2R_QN 10 2RSD14
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_16_2R_QN 10 2RSD16
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_18_2R_QN 10 2RSD18
+qsub script_SLIM3_2R_total.sh INPUT_slim3_genes_overdom_20_2R_QN 10 2RSD20
+
