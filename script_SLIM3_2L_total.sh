@@ -28,7 +28,7 @@ mkdir -p /state/partition1/inesSLIM$n/$SLURM_JOBID/
 
 ###################### TRANSFER TO state/partition1 #########################
 cp SNP_BP_SLIM3_2 /state/partition1/inesSLIM$n/$SLURM_JOBID/
-cp SIMOVERDOM_ines16 /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp SIMOVERDOM /state/partition1/inesSLIM$n/$SLURM_JOBID/
 cp AVERAGE /state/partition1/inesSLIM$n/$SLURM_JOBID/
 cp $INPUT /state/partition1/inesSLIM$n/$SLURM_JOBID/
 cp recombination-file-* /state/partition1/inesSLIM$n/$SLURM_JOBID/
@@ -86,7 +86,7 @@ num=$RANDOM
 echo "$num" > seedfile
 
 START=$(date +%s)
-./SIMOVERDOM_ines16<<@
+./SIMOVERDOM<<@
 1
 -99
 51    NINDNP (max 10000)
