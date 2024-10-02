@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd
 
-rm script_SLIM3_2R_total.sh.*
+rm script_SLIM3_2R_total_bottle.sh.*
 
 if [ $# -ne 3 ]
 then
@@ -24,22 +24,22 @@ rm -r $WDIR/OUTPUT_SLIM_$n
 fi
 
 mkdir -p $WDIR/OUTPUT_SLIM_$n
-mkdir -p /state/partition1/SLIM$n/$SLURM_JOBID/
+mkdir -p /state/partition1/inesSLIM$n/$SLURM_JOBID/
 
 ###################### TRANSFER TO state/partition1 #########################
-cp SNP_BP_SLIM3_2 /state/partition1/SLIM$n/$SLURM_JOBID/
-cp SIMOVERDOM /state/partition1/SLIM$n/$SLURM_JOBID/
-cp AVERAGE /state/partition1/SLIM$n/$SLURM_JOBID/
-cp $INPUT /state/partition1/SLIM$n/$SLURM_JOBID/
-cp recombination-file-* /state/partition1/SLIM$n/$SLURM_JOBID/
-cp genes* /state/partition1/SLIM$n/$SLURM_JOBID/
-cp B-* /state/partition1/SLIM$n/$SLURM_JOBID/
-cp shell_calculations /state/partition1/SLIM$n/$SLURM_JOBID/
-cp plink /state/partition1/SLIM$n/$SLURM_JOBID/
-cp vcftools /state/partition1/SLIM$n/$SLURM_JOBID/
+cp SNP_BP_SLIM3_2 /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp SIMOVERDOM /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp AVERAGE /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp $INPUT /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp recombination-file-* /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp genes* /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp B-* /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp shell_calculations /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp plink /state/partition1/inesSLIM$n/$SLURM_JOBID/
+cp vcftools /state/partition1/inesSLIM$n/$SLURM_JOBID/
 
 touch $WDIR/$SLURM_JOBID.`hostname`.`date +%HH%MM`
-cd /state/partition1/SLIM$n/$SLURM_JOBID
+cd /state/partition1/inesSLIM$n/$SLURM_JOBID
 
 ################################ REPLICATES #############################
 for ((r=1; r<=$REPS; r++))
@@ -54,7 +54,12 @@ END=$(date +%s)
 DIFF=$(( $END - $START ))
 echo "Slim3 took 		$DIFF seconds" >> timefile
 
+sed -i '/Genomes:/i  Individuals:' slimout$r
+
 cp collect_par_mutations.txt collect_par_mutations$r.txt
+
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/slimout$r $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/collect_par_mutations$r.txt $WDIR/OUTPUT_SLIM_$n
 
 ###################### SNP_BP_SLIM3_2 #########################
 num=$RANDOM
@@ -65,7 +70,7 @@ cp slimout$r slimout
 START=$(date +%s)
 ./SNP_BP_SLIM3_2<<@
 -99
-1000	N
+51	N
 @
 END=$(date +%s)
 DIFF=$(( $END - $START ))
@@ -84,12 +89,12 @@ START=$(date +%s)
 ./SIMOVERDOM<<@
 1
 -99
-1000    NINDNP (max 10000)
-50     NIND (max 10000)
+51    NINDNP (max 10000)
+51     NIND (max 10000)
 100             classes
 21100000          nwindows
 100000          window_size
-100              Replicates
+1              Replicates
 @
 DIFF=$(( $END - $START ))
 echo "SIMOVERDOM took 		$DIFF seconds" >> timefile
@@ -111,23 +116,28 @@ cp timefile timefile$r
 
 ######################## TRANSFER OF FILES TO DIRECTORY #########################
 
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/dataBP$r.ped $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/dataBP$r.map $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/list_allsnps$r $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/list_qtls$r $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/slimout$r $WDIR/OUTPUT_SLIM_$n
-#cp -r /state/partition1/SLIM$n/$SLURM_JOBID/collect_par_mutations$r.txt $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/genfile$r.dat $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/table$r.txt $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/tableavg.txt $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/se.txt $WDIR/OUTPUT_SLIM_$n
-#cp -r /state/partition1/SLIM$n/$SLURM_JOBID/data.map $WDIR/OUTPUT_SLIM_$n
-#cp -r /state/partition1/SLIM$n/$SLURM_JOBID/data.ped $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/timefile$r $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/tablepi* $WDIR/OUTPUT_SLIM_$n
-cp -r /state/partition1/SLIM$n/$SLURM_JOBID/tableDT* $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/dataBP$r.ped $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/dataBP$r.map $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/list_allsnps$r $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/list_qtls$r $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/slimout$r $WDIR/OUTPUT_SLIM_$n
+#cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/collect_par_mutations$r.txt $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/genfile$r.dat $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/table$r.txt $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tableavg.txt $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/se.txt $WDIR/OUTPUT_SLIM_$n
+#cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/data.map $WDIR/OUTPUT_SLIM_$n
+#cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/data.ped $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/timefile$r $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tablepi* $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tableDT* $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tablenq* $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tabler2* $WDIR/OUTPUT_SLIM_$n
+cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/tablec* $WDIR/OUTPUT_SLIM_$n
+#cp -r /state/partition1/inesSLIM$n/$SLURM_JOBID/log* $WDIR/OUTPUT_SLIM_$
 
 rm collect_par_mutations*
+rm log*
 rm slimout*
 rm data*
 rm list*
@@ -136,5 +146,5 @@ done
 
 ######################## state/partition1 CLEANING #########################
 
-rm -r /state/partition1/SLIM$n/$SLURM_JOBID/
+rm -r /state/partition1/inesSLIM$n/$SLURM_JOBID/
 rm $WDIR/$SLURM_JOBID.*
