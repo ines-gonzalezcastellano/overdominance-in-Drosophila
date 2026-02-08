@@ -1,0 +1,220 @@
+##### WRITE "1" IN CHROMOSOME X MAP FILE #########
+
+awk '{print "1" " " $2 " " $3 " " $4 " " $5 " " $6}' list_allsnps > kk
+mv kk list_allsnps
+
+
+cd SD00_2L
+qsub script_SLIM4_2L_total_selpos.sh INPUT_SD00_2L_selpos_GC2e-8.slim 10
+cd ../SD00_2R
+qsub script_SLIM4_2R_total_selpos.sh INPUT_SD00_2R_selpos_GC2e-8.slim 10
+cd ../SD00_3L
+qsub script_SLIM4_3L_total_selpos.sh INPUT_SD00_3L_selpos_GC2e-8.slim 10
+cd ../SD00_3R
+qsub script_SLIM4_3R_total_selpos.sh INPUT_SD00_3R_selpos_GC2e-8.slim 10
+cd ..
+
+
+##### COMMANDS R PREDICTIONS #########
+
+df <- read.table("fichero_predicciones.txt", header = TRUE)
+
+
+err_mANT <- (df$PB51 - df$ANT)^2
+err_mSD00B <- (df$PB51 - df$SD00B)^2
+err_mSD00sel <- (df$PB51 - df$SD00sel)^2
+err_mSD00A <- (df$PB51 - df$SD00A)^2
+err_mSD00Asel <- (df$PB51 - df$SD00Asel)^2
+err_mSD00 <- (df$PB51 - df$SD00)^2
+err_mSD00D <- (df$PB51 - df$SD00D)^2
+err_mSDADD <- (df$PB51 - df$SD00ADD)^2
+err_mSD005 <- (df$PB51 - df$SD005)^2
+err_mSD01 <- (df$PB51 - df$SD01)^2
+err_mSD02 <- (df$PB51 - df$SD02)^2
+err_mSD04 <- (df$PB51 - df$SD04)^2
+err_mSD06 <- (df$PB51 - df$SD06)^2
+err_mSD08 <- (df$PB51 - df$SD08)^2
+err_mSD10 <- (df$PB51 - df$SD10)^2
+err_mSD00N <- (df$PB51 - df$SD00N)^2
+
+
+matriz <- cbind(err_mANT, err_mSD00B, err_mSD00sel, err_mSD00A, err_mSD00Asel, err_mSD00, err_mSD00D, err_mSDADD, 
+err_mSD005, err_mSD01, err_mSD02, err_mSD04, err_mSD06, err_mSD08, err_mSD10, err_mSD00N)
+colnames(matriz) <- c("ANT", "SD00B", "SD00sel", "SD00A", "SD00Asel", "SD00", "SD00D", "SDADD", 
+"SD005", "SD01", "SD02", "SD04", "SD06", "SD08", "SD10", "SD00N") 
+
+RMSE <- sqrt(colMeans(matriz))
+print (RMSE)
+
+
+
+##### COMMANDS R POINTS #########
+
+df <- read.table("fichero_puntos.txt", header = TRUE)
+
+err_mANT <- (df$PB51 - df$ANT)^2
+err_mSD00B <- (df$PB51 - df$SD00B)^2
+err_mSD00sel <- (df$PB51 - df$SD00sel)^2
+err_mSD00A <- (df$PB51 - df$SD00A)^2
+err_mSD00Asel <- (df$PB51 - df$SD00Asel)^2
+err_mSD00 <- (df$PB51 - df$SD00)^2
+err_mSD00D <- (df$PB51 - df$SD00D)^2
+err_mSDADD <- (df$PB51 - df$SD00ADD)^2
+err_mSD005 <- (df$PB51 - df$SD005)^2
+err_mSD01 <- (df$PB51 - df$SD01)^2
+err_mSD02 <- (df$PB51 - df$SD02)^2
+err_mSD04 <- (df$PB51 - df$SD04)^2
+err_mSD06 <- (df$PB51 - df$SD06)^2
+err_mSD08 <- (df$PB51 - df$SD08)^2
+err_mSD10 <- (df$PB51 - df$SD10)^2
+err_mSD00N <- (df$PB51 - df$SD00N)^2
+err_mSDREC <- (df$PB51 - df$SD00REC)^2
+
+matriz <- cbind(err_mANT, err_mSD00B, err_mSD00sel, err_mSD00A, err_mSD00Asel, err_mSD00, err_mSD00D, err_mSDADD, 
+err_mSD005, err_mSD01, err_mSD02, err_mSD04, err_mSD06, err_mSD08, err_mSD10, err_mSD00N, err_mSDREC)
+colnames(matriz) <- c("ANT", "SD00B", "SD00sel", "SD00A", "SD00Asel", "SD00", "SD00D", "SDADD", 
+"SD005", "SD01", "SD02", "SD04", "SD06", "SD08", "SD10", "SD00N", "SDREC") 
+
+RMSE <- sqrt(colMeans(matriz))
+print (RMSE)
+
+
+resultado <- friedman.test(matriz)
+print (resultado)
+
+# install.packages("PMCMRplus")
+# install.packages("scmamp")
+
+library(PMCMRplus)
+
+data_long <- as.data.frame(as.table(as.matrix(matriz)))
+colnames(data_long) <- c("Dataset", "Algorithm", "Rank")
+
+# Apply Nemenyi post-hoc test
+PMCMRplus::frdAllPairsNemenyiTest(Rank ~ Algorithm | Dataset, data = data_long)
+
+
+
+
+
+##### COMMANDS R POINTS MODELS #########
+
+df <- read.table("fichero_puntos_models.txt", header = TRUE)
+
+err_mANT <- (df$PB51 - df$ANT)^2
+err_mSD00B <- (df$PB51 - df$SD00B)^2
+err_mSD00sel <- (df$PB51 - df$SD00sel)^2
+err_mSD00A <- (df$PB51 - df$SD00A)^2
+err_mSD00Asel <- (df$PB51 - df$SD00Asel)^2
+err_mSD00 <- (df$PB51 - df$SD00)^2
+err_mSD00D <- (df$PB51 - df$SD00D)^2
+err_mSDADD <- (df$PB51 - df$SD00ADD)^2
+err_mSD00N <- (df$PB51 - df$SD00N)^2
+err_mSDREC <- (df$PB51 - df$SD00REC)^2
+
+matriz <- cbind(err_mANT, err_mSD00B, err_mSD00sel, err_mSD00A, err_mSD00Asel, err_mSD00, err_mSD00D, err_mSDADD, 
+err_mSD00N, err_mSDREC)
+colnames(matriz) <- c("ANT", "SD00B", "SD00sel", "SD00A", "SD00Asel", "SD00", "SD00D", "SDADD", 
+"SD00N", "SDREC") 
+
+RMSE <- sqrt(colMeans(matriz))
+print (RMSE)
+
+
+resultado <- friedman.test(matriz)
+print (resultado)
+
+# install.packages("PMCMRplus")
+# install.packages("scmamp")
+
+library(PMCMRplus)
+
+data_long <- as.data.frame(as.table(as.matrix(matriz)))
+colnames(data_long) <- c("Dataset", "Algorithm", "Rank")
+
+# Apply Nemenyi post-hoc test
+PMCMRplus::frdAllPairsNemenyiTest(Rank ~ Algorithm | Dataset, data = data_long)
+
+
+
+
+##### COMMANDS R POINTS SD #########
+
+df <- read.table("fichero_puntos_SD.txt", header = TRUE)
+
+err_mSD00Asel <- (df$PB51 - df$SD00Asel)^2
+err_mSD005 <- (df$PB51 - df$SD005)^2
+err_mSD01 <- (df$PB51 - df$SD01)^2
+err_mSD02 <- (df$PB51 - df$SD02)^2
+err_mSD04 <- (df$PB51 - df$SD04)^2
+err_mSD06 <- (df$PB51 - df$SD06)^2
+err_mSD08 <- (df$PB51 - df$SD08)^2
+err_mSD10 <- (df$PB51 - df$SD10)^2
+
+matriz <- cbind(err_mSD00sel,  err_mSD005, err_mSD01, err_mSD02, err_mSD04, err_mSD06, err_mSD08, err_mSD10)
+colnames(matriz) <- c("SD00sel", "SD005", "SD01", "SD02", "SD04", "SD06", "SD08", "SD10") 
+
+RMSE <- sqrt(colMeans(matriz))
+print (RMSE)
+
+
+resultado <- friedman.test(matriz)
+print (resultado)
+
+# install.packages("PMCMRplus")
+# install.packages("scmamp")
+
+library(PMCMRplus)
+
+data_long <- as.data.frame(as.table(as.matrix(matriz)))
+colnames(data_long) <- c("Dataset", "Algorithm", "Rank")
+
+# Apply Nemenyi post-hoc test
+PMCMRplus::frdAllPairsNemenyiTest(Rank ~ Algorithm | Dataset, data = data_long)
+
+
+
+
+##### KOLMOGOROV-SMIRNOV TEST #########
+
+df <- read.table("c_pi", header = TRUE)
+
+# Crear un data frame vacío
+resultados <- data.frame(Columna = character(),
+                         P_Value = numeric(),
+                         stringsAsFactors = FALSE)
+
+# Vector base (columna A)
+x <- as.numeric(na.omit(df$PB51))
+
+# Iterar sobre columnas en el orden original
+for (col in names(df)) {
+  if (col != "PB51") {
+    y <- as.numeric(na.omit(df[[col]]))
+    
+    if (length(x) >= 2 && length(y) >= 2) {
+      resultado <- ks.test(x, y)
+      resultados <- rbind(resultados, data.frame(Columna = col,
+                                                 P_Value = resultado$p.value))
+    } else {
+      resultados <- rbind(resultados, data.frame(Columna = col,
+                                                 P_Value = NA))
+    }
+  }
+}
+
+# Para asegurarnos del orden original según df
+orden_columnas <- names(df)[names(df) != "PB51"]
+resultados$Orden <- match(resultados$Columna, orden_columnas)
+
+# Ordenar por el número de columna original
+resultados <- resultados[order(resultados$Orden), ]
+resultados$Orden <- NULL  # Quitar columna auxiliar si no la necesitas
+
+# Mostrar tabla
+print(resultados)
+
+resultados_order <- resultados[order(resultados$P_Value), ]
+
+# Mostrar tabla
+print(resultados_order)
