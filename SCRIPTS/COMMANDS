@@ -1,0 +1,40 @@
+##### WRITE "1" IN CHROMOSOME X MAP FILE #########
+
+awk '{print "1" " " $2 " " $3 " " $4 " " $5 " " $6}' list_allsnps > kk
+mv kk list_allsnps
+
+
+cd  SD04_2L
+qsub script_SLIM4_2L_total_selpos.sh INPUT_SD04_2L_selpos_GC2e-8.slim 3
+cd ../SD04_2R
+qsub script_SLIM4_2R_total_selpos.sh INPUT_SD04_2R_selpos_GC2e-8.slim 3
+cd ../SD04_3L
+qsub script_SLIM4_3L_total_selpos.sh INPUT_SD04_3L_selpos_GC2e-8.slim 3
+cd ../SD04_3R
+qsub script_SLIM4_3R_total_selpos.sh INPUT_SD04_3R_selpos_GC2e-8.slim 3
+cd ..
+
+cd  ../SD04_2L
+qsub script_SLIM4_2L_total_selpos.sh INPUT_SD04_2L_selpos_GC2e-8.slim 3
+cd ../SD04_2R
+qsub script_SLIM4_2R_total_selpos.sh INPUT_SD04_2R_selpos_GC2e-8.slim 3
+cd ../SD04_3L
+qsub script_SLIM4_3L_total_selpos.sh INPUT_SD04_3L_selpos_GC2e-8.slim 3
+cd ../SD04_3R
+qsub script_SLIM4_3R_total_selpos.sh INPUT_SD04_3R_selpos_GC2e-8.slim 3
+
+qsub script_SLIM4_2L_total_bottle.sh INPUT_slim4_genes_overdom_00_2L_QN_intergenes_bottle_NEUTRAL.slim 2
+
+
+# RELATIONSHIP BETWEEN PI and C
+
+cat OUTPUT_INPUT_SD04_2L_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_2R_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_3L_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_3R_GC2e-8.slim/table_C_PI1.txt > TABLE_C_PI1
+
+cat OUTPUT_INPUT_SD04_2L_selpos_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_2R_selpos_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_3L_selpos_GC2e-8.slim/table_C_PI1.txt OUTPUT_INPUT_SD04_3R_selpos_GC2e-8.slim/table_C_PI1.txt > TABLE_C_PI1
+
+awk '{print $1}' TABLE_C_PI1 > kk
+mv kk c_vec
+awk '{print $2}' TABLE_C_PI1 > kk
+mv kk pi_vec
+R CMD BATCH script.R
+
